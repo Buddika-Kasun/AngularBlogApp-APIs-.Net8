@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using API.Extensions;
+using Application.Common.Results;
+using Application.Interfaces;
 using Application.Models.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,14 +16,15 @@ namespace API.Controllers
         {
             var response = await authService.RegisterAsync(registerRequest);
 
-            return Results.Ok(response);
+            return response.ToHttpResponse();
         }
 
         [HttpPost("login")]
         public async Task<IResult> Login(LoginRequest loginRequest)
         {
+            var response = await authService.LoginAsync(loginRequest);
 
-            return Results.Ok(loginRequest);
+            return response.ToHttpResponse();
         }
     }
 }

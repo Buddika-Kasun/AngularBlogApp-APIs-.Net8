@@ -3,32 +3,71 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common.Results;
+using Application.Errors;
 using Application.Interfaces;
 using Application.Models.Request;
+using Application.Validators;
 using Domain.Entities;
 using Domain.Interfaces;
 
 namespace Application.Services
 {
-    public class AuthService(IUnitOfWork unitOfWork, IUserRepository userRepository) : IAuthService
+    public class AuthService(
+        IUnitOfWork unitOfWork, 
+        IUserRepository userRepository, 
+        LoginRequestValidator loginRequestValidator, 
+        RegisterRequestValidator registerRequestValidator
+    ) : IAuthService
     {
-        public Task<string> LoginAsync(LoginRequest loginRequest)
+        public async Task<Result> LoginAsync(LoginRequest loginRequest)
         {
-            throw new NotImplementedException();
+            var validationResult = await loginRequestValidator.ValidateAsync(loginRequest);
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors.Select(a => a.ErrorMessage);
+                return Result.Failure(AuthError.CreateInvalidRequestError(errors));
+            }
+
+            var (email, password) = loginRequest;
+
+            var user = await userRepository.GetUserByEmailAsync(email);
+
+            if (user is null)
+            {
+                return Result.Failure(AuthError.UserNotFound);
+            }
+
+            if (user.Password != password)
+            {
+                return Result.Failure(AuthError.InvalidPassword);
+            }
+
+            var token = "token"; // TO DO
+
+            var result = new
+            {
+                Token = token,
+                Username = user.Username,
+            };
+
+            return Result.Success(result);
         }
 
-        public async Task<string> RegisterAsync(RegisterRequest registerRequest)
+        public async Task<Result> RegisterAsync(RegisterRequest registerRequest)
         {
-            if (registerRequest == null)
+            var validationResult = await registerRequestValidator.ValidateAsync(registerRequest);
+            if (!validationResult.IsValid)
             {
-                throw new ArgumentNullException(nameof(registerRequest));
+                var errors = validationResult.Errors.Select(a => a.ErrorMessage);
+                return Result.Failure(AuthError.CreateInvalidRequestError(errors));
             }
 
             var userExist = await userRepository.GetUserByEmailAsync(registerRequest.Email);
 
             if (userExist is not null)
             {
-                throw new Exception("User already exist!");
+                return Result.Failure(AuthError.UserAlreadyExist);
             }
 
             var user = new User
@@ -41,7 +80,7 @@ namespace Application.Services
             await userRepository.AddAsync(user);
             await unitOfWork.CommitAsync();
 
-            return "Register Success!";
+            return Result.Success("User register successfully");
         }
     }
 }

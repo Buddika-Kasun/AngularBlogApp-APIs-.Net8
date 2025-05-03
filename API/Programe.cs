@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "Angular Blog App API's",
         Version = "v1",
-        Description = "🔥 This is a custom description for your API 🔥"
+        Description = "🔥 This is a custom description for API 🔥"
     });
 });
 
