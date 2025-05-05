@@ -17,7 +17,8 @@ namespace Application.Services
         IUnitOfWork unitOfWork, 
         IUserRepository userRepository, 
         LoginRequestValidator loginRequestValidator, 
-        RegisterRequestValidator registerRequestValidator
+        RegisterRequestValidator registerRequestValidator,
+        IJwtService jwtService
     ) : IAuthService
     {
         public async Task<Result> LoginAsync(LoginRequest loginRequest)
@@ -43,7 +44,7 @@ namespace Application.Services
                 return Result.Failure(AuthError.InvalidPassword);
             }
 
-            var token = "token"; // TO DO
+            var token = await jwtService.GenerateTokenAsync(user);
 
             var result = new
             {
