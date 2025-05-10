@@ -9,9 +9,17 @@ namespace API.Controllers
     {
         [Authorize]
         [HttpGet]
-        public string[] GetUser()
+        public string[] GetUsers()
         {
             return [ "User 1", "user 2", "user 3"];
         }
+
+        // Create API endpoint for user
+        //      - GetUsers
+        //      - GetUserById
+        //      - UpdateUser
+        //      - DeleteUser
+        //      - AssignAdminRole
+        //      - RevokeAdminRole
     }
 }

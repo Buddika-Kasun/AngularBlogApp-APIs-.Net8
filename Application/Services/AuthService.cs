@@ -10,6 +10,7 @@ using Application.Models.Request;
 using Application.Validators;
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.Services
 {
@@ -39,7 +40,11 @@ namespace Application.Services
                 return Result.Failure(AuthError.UserNotFound);
             }
 
-            if (user.Password != password)
+            var passwordHasher = new PasswordHasher<User>();
+            var verificationResult = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+
+            //if (user.Password != password)
+            if (verificationResult == PasswordVerificationResult.Failed)
             {
                 return Result.Failure(AuthError.InvalidPassword);
             }
@@ -76,7 +81,13 @@ namespace Application.Services
                 Username = registerRequest.Username,
                 Email = registerRequest.Email,
                 Password = registerRequest.Password,
+                UserRoles = [new UserRole { RoleId = 3 }]
             };
+
+            var passwordHasher = new PasswordHasher<User>();
+            var hashedPassword = passwordHasher.HashPassword(user, registerRequest.Password);
+
+            user.Password = hashedPassword;
 
             await userRepository.AddAsync(user);
             await unitOfWork.CommitAsync();

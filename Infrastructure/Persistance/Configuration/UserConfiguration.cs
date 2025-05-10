@@ -30,8 +30,8 @@ namespace Infrastructure.Presistance.Configuration
 
             builder.Property(u => u.Password)
                 .IsRequired()
-                .HasMaxLength(50)
-                .HasColumnType("nvarchar(50)");
+                .HasMaxLength(255)
+                .HasColumnType("nvarchar(255)");
 
             builder.HasMany(u => u.UserRoles)
                 .WithOne(ur => ur.User)
