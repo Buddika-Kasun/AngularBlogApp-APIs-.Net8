@@ -25,5 +25,21 @@ namespace Infrastructure.Persistance.Repositories
                 .Select(r => r.Role.Name)
                 .ToListAsync();
         }
+
+        public async Task<User?> GetUserByIdAsync(int id)
+        {
+            return await context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await context.Users
+                .Include(u => u.UserRoles)
+                .ThenInclude(ur => ur.Role)
+                .ToListAsync();
+        }
     }
 }

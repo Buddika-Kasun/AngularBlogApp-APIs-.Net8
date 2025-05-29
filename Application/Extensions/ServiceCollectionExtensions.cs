@@ -18,6 +18,7 @@ namespace Application.Extensions
             service.AddValidatorsFromAssembly(typeof(ServiceCollectionExtensions).Assembly);
             service.AddScoped<IAuthService, AuthService>();
             service.AddScoped<IJwtService, JwtService>();
+            service.AddScoped<IUserService, UserService>();
 
             return service;
         }

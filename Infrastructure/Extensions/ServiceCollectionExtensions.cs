@@ -25,6 +25,8 @@ namespace Infrastructure.Extensions
 
             services.AddScoped<IUserRepository, UserRepository>();
 
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+
             return services;
         }
     }

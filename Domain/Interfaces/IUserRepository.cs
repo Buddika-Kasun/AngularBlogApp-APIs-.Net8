@@ -11,5 +11,7 @@ namespace Domain.Interfaces
     {
         Task<User?> GetUserByEmailAsync(string email);
         Task<List<string>> GetUserRoleByEmailAsync(string email);
+        Task<User?> GetUserByIdAsync(int id);
+        Task<List<User>> GetAllUsersAsync();
     }
 }
