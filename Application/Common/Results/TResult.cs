@@ -14,6 +14,7 @@ namespace Application.Common.Results
             _value = value;
         }
 
-        public TValue Value => IsSuccess ? _value : throw new InvalidOperationException("No value for failure result");
+        //public TValue Value => IsSuccess ? _value : throw new InvalidOperationException("No value for failure result");
+        public TValue Value => IsSuccess ? _value : default!;
     }
 }
